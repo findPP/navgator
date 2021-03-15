@@ -11,6 +11,7 @@
                             </div>
                             <div class="nav_list_box_text">{{ item.title }}</div>
                             <div class="nav_list_delete el-icon-circle-close" @click.stop="deleteUrl(item._id)"></div>
+                            <div class="nav_list_update el-icon-refresh-right" @click.stop="updateUrl(item)"></div>
                         </div>
                     </div>
                 </li>
@@ -54,6 +55,7 @@ export default {
             urlInput: '',
             urlTitle: '',
             urlImg: '',
+            urlId: '',
             userData: state.userData,
             pageData: {
                 page: 0,
@@ -61,7 +63,8 @@ export default {
             },
             urlList: [],
             tempFile: null,
-            total:0,
+            total: 0,
+            replaceFlag: false,
         };
     },
     created() {
@@ -78,9 +81,9 @@ export default {
         closeDialog() {
             this.tempFile = null;
         },
-        currentChange(page){
+        currentChange(page) {
             this.pageData.page = page - 1;
-            this.getUrlList()
+            this.getUrlList();
         },
         replaceImg(e) {
             let file = e.target.files[0];
@@ -100,7 +103,7 @@ export default {
                 id: this.userData._id,
             };
             let res = await Api.getUrlList(params);
-            console.log(res)
+            console.log(res);
             this.urlList = res.data.data;
             this.total = res.data.total;
         },
@@ -139,6 +142,13 @@ export default {
             }
         },
         async addUserUrl() {
+            if (this.replaceFlag) {
+                await this.replaceUrl();
+            } else {
+                await this.postUrl();
+            }
+        },
+        async postUrl() {
             let params = {
                 icon: this.urlImg,
                 title: this.urlTitle,
@@ -164,6 +174,41 @@ export default {
             } else {
                 this.$message.warning(res.data.message);
             }
+        },
+        async replaceUrl() {
+            let formData, res;
+            formData = new FormData();
+            if (this.tempFile) {
+                formData.append('file', this.tempFile);
+            } 
+            formData.append('icon', this.urlImg);
+            formData.append('title', this.urlTitle);
+            formData.append('url', this.urlInput);
+            formData.append('id', this.userData._id);
+            formData.append('urlId', this.urlId);
+            res = await Api.updateUrl(formData);
+            this.tempFile = null;
+            this.replaceFlag = false;
+            if (res.data.data === 'success') {
+                this.$message.success(res.data.message);
+                this.getUrlList();
+                this.dialogVisible = false;
+                this.urlImg = '';
+                this.urlInput = '';
+                this.urlTitle = '';
+                this.urlId = '';
+            } else {
+                this.$message.warning(res.data.message);
+            }
+        },
+        async updateUrl(item) {
+            console.log(item)
+            this.replaceFlag = true;
+            this.urlInput = item.url;
+            this.urlTitle = item.title;
+            this.urlImg = item.imgUrl;
+            this.dialogVisible = true;
+            this.urlId = item._id
         },
     },
 };
@@ -192,6 +237,9 @@ export default {
                         background-color: rgba(32, 33, 36, 0.06);
                         div {
                             .nav_list_delete {
+                                opacity: 1;
+                            }
+                            .nav_list_update {
                                 opacity: 1;
                             }
                         }
@@ -233,6 +281,14 @@ export default {
                             font-size: 18px;
                             cursor: pointer;
                         }
+                        .nav_list_update {
+                            opacity: 0;
+                            position: absolute;
+                            top: 8px;
+                            left: 8px;
+                            font-size: 18px;
+                            cursor: pointer;
+                        }
                     }
                 }
             }
@@ -242,7 +298,7 @@ export default {
         width: 100%;
         height: 50px;
     }
-    .page-change{
+    .page-change {
         display: flex;
         justify-content: center;
         align-items: center;

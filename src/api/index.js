@@ -28,5 +28,9 @@ export default {
     //删除url
     deleteUrl(params) {
         return axios.post('/api/deleteUrl', params)
+    },
+    //修改url
+    updateUrl(params) {
+        return axios.post('/api/updateUrl', params)
     }
 }
