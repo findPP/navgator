@@ -93,6 +93,7 @@ export default {
                 unumber: md5(this.unumber),
                 pwd: md5(this.pwd),
             };
+            console.log(params)
             Api.login(params).then(res => {
                 if (res.data.message == '登陆成功') {
                     this.$message.success('登陆成功');
