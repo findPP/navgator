@@ -27,5 +27,5 @@ jobs:
           ARGS: '-rltgoDzvO --delete'
           SOURCE: dist
           REMOTE_HOST: '106.52.197.108'
-          REMOTE_USER: root 
+          REMOTE_USER: ubuntu 
           TARGET: /root/node-server
