@@ -5,7 +5,7 @@
         <div class="login_box">
             <div class="login_box_log" v-show="!showRegister">
                 <div class="flrg">
-                    <h3>登录</h3>
+                    <h3>登录21321</h3>
                     <div class="login_input">
                         <span>账号:</span>
                         <input type="text" v-model="unumber" placeholder="请输入账号" />

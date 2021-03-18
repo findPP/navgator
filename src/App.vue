@@ -1,6 +1,6 @@
 <template>
     <div id="app">
-        123测试一下dsad
+        123
         <router-view />
     </div>
 </template>
